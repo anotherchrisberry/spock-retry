@@ -24,10 +24,18 @@ dependencies {
 version = "0.2-SNAPSHOT"
 group = "com.anotherchrisberry"
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allGroovy
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
         }
     }
 }
