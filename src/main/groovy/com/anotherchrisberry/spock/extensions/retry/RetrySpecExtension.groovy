@@ -8,7 +8,7 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
 
     void visitFeatureAnnotation(RetryOnFailure retries, FeatureInfo feature) {
         clearInterceptors(feature)
-        feature.getFeatureMethod().interceptors.add(new RetryInterceptor(retries.times()))
+        feature.getFeatureMethod().interceptors.add(new RetryInterceptor(getNumberOfRetries(retries)))
     }
 
     void visitSpecAnnotation(RetryOnFailure retries, SpecInfo spec) {
@@ -31,11 +31,14 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
             List<FeatureInfo> featuresToRetry = [selfAndSubSpecs.features].flatten().unique()
             for (FeatureInfo feature : featuresToRetry) {
                 clearInterceptors(feature)
-                String defaultRetries = Integer.toString(retries.times())
-                int numberOfRetries = Integer.parseInt(System.getProperty("spock-retry.times", defaultRetries))
-                feature.getFeatureMethod().addInterceptor(new RetryInterceptor(numberOfRetries))
+                feature.getFeatureMethod().addInterceptor(new RetryInterceptor(getNumberOfRetries(retries)))
             }
         }
+    }
+
+    int getNumberOfRetries(RetryOnFailure retries) {
+        String defaultRetries = Integer.toString(retries.times())
+        return Integer.parseInt(System.getProperty("spock-retry.times", defaultRetries))
     }
 
     private void clearInterceptors(FeatureInfo featureInfo) {
