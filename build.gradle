@@ -1,5 +1,16 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.idainfront.se/content/groups/internal" }
+    }
+
+    dependencies {
+        classpath "com.iipax.gradle.plugins:ida-maven-publish:5.6"
+    }
+}
+
 apply plugin: "groovy"
 apply plugin: "maven"
+apply plugin: "com.iipax.maven-publish"
 
 repositories() {
 	mavenCentral()
@@ -12,3 +23,11 @@ dependencies {
 
 version = "0.2-SNAPSHOT"
 group = "com.anotherchrisberry"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
