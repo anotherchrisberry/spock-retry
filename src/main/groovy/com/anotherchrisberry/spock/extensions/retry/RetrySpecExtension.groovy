@@ -31,7 +31,8 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
             List<FeatureInfo> featuresToRetry = [selfAndSubSpecs.features].flatten().unique()
             for (FeatureInfo feature : featuresToRetry) {
                 clearInterceptors(feature)
-                feature.getFeatureMethod().addInterceptor(new RetryInterceptor(retries.times()))
+                def retries = System.getProperty("spock-retry.times", retries.times())
+                feature.getFeatureMethod().addInterceptor(new RetryInterceptor(retries))
             }
         }
     }
