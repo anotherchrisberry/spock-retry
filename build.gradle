@@ -13,12 +13,13 @@ apply plugin: "maven"
 apply plugin: "com.iipax.maven-publish"
 
 repositories() {
-	mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-	compile "org.codehaus.groovy:groovy:2.4.3"
-	compile "org.spockframework:spock-core:1.0-groovy-2.4"
+  compile "org.codehaus.groovy:groovy:2.4.3"
+  compile "org.spockframework:spock-core:1.0-groovy-2.4"
+  compile "org.slf4j:slf4j-api:1.6.0"
 }
 
 version = "0.2-SNAPSHOT"
