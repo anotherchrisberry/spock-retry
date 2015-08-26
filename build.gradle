@@ -22,7 +22,7 @@ dependencies {
   compile "org.slf4j:slf4j-api:1.6.0"
 }
 
-version = "0.2"
+version = "0.3-SNAPSHOT"
 group = "com.anotherchrisberry"
 
 task sourceJar(type: Jar) {
