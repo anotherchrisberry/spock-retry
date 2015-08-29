@@ -1,6 +1,7 @@
 apply plugin: "groovy"
 apply plugin: "maven"
 apply plugin: "maven-publish"
+apply plugin: "idea"
 
 repositories() {
   mavenCentral()

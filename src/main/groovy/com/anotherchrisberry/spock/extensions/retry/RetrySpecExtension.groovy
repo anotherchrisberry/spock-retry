@@ -1,7 +1,9 @@
 package com.anotherchrisberry.spock.extensions.retry
 
+import org.spockframework.compiler.model.FeatureMethod
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension
 import org.spockframework.runtime.model.FeatureInfo
+import org.spockframework.runtime.model.MethodInfo
 import org.spockframework.runtime.model.SpecInfo
 
 class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailure> {
@@ -31,7 +33,7 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
             List<FeatureInfo> featuresToRetry = [selfAndSubSpecs.features].flatten().unique()
             for (FeatureInfo feature : featuresToRetry) {
                 clearInterceptors(feature)
-                feature.getFeatureMethod().addInterceptor(new RetryInterceptor(getNumberOfRetries(retries)))
+                addInterceptors(feature, retries)
             }
         }
     }
@@ -41,7 +43,25 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
         return Integer.parseInt(System.getProperty("spock-retry.times", defaultRetries))
     }
 
+    private List<MethodInfo> getInterceptableMethods(FeatureInfo feature) {
+        SpecInfo spec = feature.getSpec()
+        [ spec.setupMethods,
+          spec.setupSpecMethods,
+          spec.cleanupMethods,
+          spec.cleanupSpecMethods,
+          feature.featureMethod
+        ].flatten().unique() as List<MethodInfo>
+    }
+
     private void clearInterceptors(FeatureInfo featureInfo) {
-        featureInfo.featureMethod.interceptors.removeAll { it.class == RetryInterceptor }
+        List<MethodInfo> interceptableMethods = getInterceptableMethods(featureInfo)
+        interceptableMethods.each { it.interceptors.removeAll { it.class == RetryInterceptor } }
+    }
+
+    private void addInterceptors(FeatureInfo featureInfo, RetryOnFailure retries) {
+        def interceptor = new RetryInterceptor(getNumberOfRetries(retries))
+        getInterceptableMethods(featureInfo).each {
+            it.addInterceptor(interceptor)
+        }
     }
 }
