@@ -3,3 +3,7 @@
 out
 *.iml
 build
+.classpath
+.project
+.settings/
+bin/
