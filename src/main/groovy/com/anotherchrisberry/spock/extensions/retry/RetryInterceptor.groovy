@@ -30,13 +30,23 @@ class RetryInterceptor implements IMethodInterceptor {
                     throw t
                 }
                 invocation.spec.cleanupMethods.each {
-                    if (it.reflection) {
-                        ReflectionUtil.invokeMethod(invocation.target, it.reflection)
+                    try {
+                        if (it.reflection) {
+                            ReflectionUtil.invokeMethod(invocation.target, it.reflection)
+                        }
+                    } catch (Throwable t2) {
+                        LOG.warn("Retry caught failure ${attempts + 1} / ${retryMax + 1} while cleaning up", t2)
                     }
                 }
                 invocation.spec.setupMethods.each {
-                    if (it.reflection) {
-                        ReflectionUtil.invokeMethod(invocation.target, it.reflection)
+                    try {
+                        if (it.reflection) {
+                            ReflectionUtil.invokeMethod(invocation.target, it.reflection)
+                        }
+                    } catch (Throwable t2) {
+                        // increment counter, since this is the start of the re-run
+                        attempts++
+                        LOG.info("Retry caught failure ${attempts + 1} / ${retryMax + 1} while setting up", t2)
                     }
                 }
             }
