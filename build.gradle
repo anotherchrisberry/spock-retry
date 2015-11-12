@@ -1,10 +1,21 @@
-apply plugin: "groovy"
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+    }
+}
+
+apply plugin: "com.jfrog.bintray"
 apply plugin: "maven"
 apply plugin: "maven-publish"
+apply plugin: "groovy"
 apply plugin: "idea"
 
 repositories() {
-  mavenCentral()
+  jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -12,9 +23,6 @@ dependencies {
   compile "org.spockframework:spock-core:1.0-groovy-2.4"
   compile "org.slf4j:slf4j-api:1.6.0"
 }
-
-version = "0.3-SNAPSHOT"
-group = "com.anotherchrisberry"
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allGroovy
@@ -24,10 +32,26 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
+            groupId "com.anotherchrisberry"
+            artifactId "spock-retry"
+            version "0.4"
         }
+    }
+}
+
+bintray {
+    user = System.getProperty('user')
+    key = System.getProperty('apiKey')
+    pkg {
+      repo = "spock-retry"
+      name = "spock-retry"
+      licenses = ["MIT"]
+      vcsUrl = "https://github.com/anotherchrisberry/spock-retry.git"
+      publications = ["mavenJava"]    
+      version {
+        name = "0.4.0"
+        released = new Date()
+        vcsTag = "0.4"
+      }
     }
 }
