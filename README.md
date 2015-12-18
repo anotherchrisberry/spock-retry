@@ -49,3 +49,8 @@ class ChildSpec extends BaseSpec {
 ```
 
 The `times` argument is optional; with none specified, the runner will attempt the feature twice before failing. Annotations of greater specificity *should* override annotations of lesser specificity, i.e. subclass annotations override superclass annotations, feature (i.e. method) annotations override class annotations. I say *should* because it's based on observed behavior, not a deep dive into the Spock internals to understand the order in which the annotations are visited.
+
+## Installation
+The latest release of this extension works with Spock 1.0 and is available on [bintray](https://bintray.com/anotherchrisberry/spock-retry/spock-retry).
+
+If you are using Spock 0.7, you'll need to grab the code from the [initial commit](https://github.com/anotherchrisberry/spock-retry/tree/e3135038fb796b2c44efda3adc29970dc40b09d5). Sorry, I'm not sure the best way to go about this. You could grab the three files in [this directory](https://github.com/anotherchrisberry/spock-retry/tree/e3135038fb796b2c44efda3adc29970dc40b09d5/src/main/groovy/com/anotherchrisberry/spock/extensions/retry) and include them in your project.
