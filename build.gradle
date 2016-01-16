@@ -35,6 +35,9 @@ publishing {
             groupId "com.anotherchrisberry"
             artifactId "spock-retry"
             version "0.4"
+            artifact sourceJar {
+              classifier "sources"
+            }
         }
     }
 }
