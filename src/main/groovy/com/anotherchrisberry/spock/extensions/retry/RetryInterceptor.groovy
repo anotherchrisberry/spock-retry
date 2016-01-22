@@ -29,14 +29,18 @@ class RetryInterceptor implements IMethodInterceptor {
                 if (attempts > retryMax) {
                     throw t
                 }
-                invocation.spec.cleanupMethods.each {
-                    if (it.reflection) {
-                        ReflectionUtil.invokeMethod(invocation.target, it.reflection)
+                invocation.spec.specsBottomToTop.each { spec ->
+                    spec.cleanupMethods.each {
+                        if (it.reflection) {
+                            ReflectionUtil.invokeMethod(invocation.target, it.reflection)
+                        }
                     }
                 }
-                invocation.spec.setupMethods.each {
-                    if (it.reflection) {
-                        ReflectionUtil.invokeMethod(invocation.target, it.reflection)
+                invocation.spec.specsTopToBottom.each { spec ->
+                    spec.setupMethods.each {
+                        if (it.reflection) {
+                            ReflectionUtil.invokeMethod(invocation.target, it.reflection)
+                        }
                     }
                 }
             }
