@@ -11,6 +11,8 @@ class RetryInterceptor implements IMethodInterceptor {
 
     static Logger LOG = LoggerFactory.getLogger(RetryInterceptor.class);
 
+    private static final String BEFORE_RETRY_METHOD_NAME = "beforeRetry"
+
     Integer retryMax
 
     RetryInterceptor(int retryMax) {
@@ -47,6 +49,15 @@ class RetryInterceptor implements IMethodInterceptor {
                         // increment counter, since this is the start of the re-run
                         attempts++
                         LOG.info("Retry caught failure ${attempts + 1} / ${retryMax + 1} while setting up", t2)
+                    }
+                }
+
+                if(invocation.target.respondsTo(BEFORE_RETRY_METHOD_NAME)) {
+                    try {
+                        invocation.target."$BEFORE_RETRY_METHOD_NAME"()
+                    } catch (Throwable t2) {
+                        // increment counter, since this is the start of the re-run
+                        LOG.info("Retry caught failure when invoking $BEFORE_RETRY_METHOD_NAME ", t2)
                     }
                 }
             }
