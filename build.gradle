@@ -1,4 +1,4 @@
-def spockRetryVersion = "0.4.1"
+def spockRetryVersion = "0.5.0"
 
 buildscript {
     repositories {
