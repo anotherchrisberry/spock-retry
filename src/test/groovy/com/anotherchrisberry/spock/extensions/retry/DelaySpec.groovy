@@ -7,7 +7,7 @@ class DelaySpec extends Specification {
     static Long start = new Date().getTime();
     static Integer methodLevelTries = 0
 
-    @RetryOnFailure(delaySeconds = 0.2d)
+    @RetryOnFailure(delaySeconds = 1)
     void 'a terrible way to test Thread.sleep'() {
         when:
         if (methodLevelTries < 1) {
@@ -18,6 +18,6 @@ class DelaySpec extends Specification {
 
         then:
         methodLevelTries == 1
-        duration > 200 && duration < 1000
+        duration > 999 && duration < 2000
     }
 }
