@@ -13,6 +13,6 @@ import java.lang.annotation.Target
 public @interface RetryOnFailure {
 
     int times() default 1;
-    double delaySeconds() default 0.0;
+    int delaySeconds() default 0;
 
 }

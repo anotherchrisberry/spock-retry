@@ -54,6 +54,14 @@ class ChildSpec extends BaseSpec {
 }
 ```
 
+If you need to pause between runs, you can:
+```groovy
+    @RetryOnFailure(delaySeconds=2)
+    void 'does something but might fail because it's been throttled'() {
+        // will pause two seconds before trying to run again
+    }
+```
+
 The `times` argument is optional; with none specified, the runner will attempt the feature twice before failing. Annotations of greater specificity *should* override annotations of lesser specificity, i.e. subclass annotations override superclass annotations, feature (i.e. method) annotations override class annotations. I say *should* because it's based on observed behavior, not a deep dive into the Spock internals to understand the order in which the annotations are visited.
 
 ## Installation
