@@ -10,7 +10,7 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
 
     void visitFeatureAnnotation(RetryOnFailure retries, FeatureInfo feature) {
         clearInterceptors(feature)
-        feature.getFeatureMethod().interceptors.add(new RetryInterceptor(getNumberOfRetries(retries)))
+        feature.getFeatureMethod().interceptors.add(new RetryInterceptor(getNumberOfRetries(retries), getDelaySeconds(retries)))
     }
 
     void visitSpecAnnotation(RetryOnFailure retries, SpecInfo spec) {
@@ -42,6 +42,10 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
         String defaultRetries = Integer.toString(retries.times())
         return Integer.parseInt(System.getProperty("spock-retry.times", defaultRetries))
     }
+    double getDelaySeconds(RetryOnFailure retries) {
+        String defaultDelay = Double.toString(retries.delaySeconds())
+        return Double.parseDouble(System.getProperty("spck-retry.delaySeconds", defaultDelay))
+    }
 
     private List<MethodInfo> getInterceptableMethods(FeatureInfo feature) {
         SpecInfo spec = feature.getSpec()
@@ -59,7 +63,7 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
     }
 
     private void addInterceptors(FeatureInfo featureInfo, RetryOnFailure retries) {
-        def interceptor = new RetryInterceptor(getNumberOfRetries(retries))
+        def interceptor = new RetryInterceptor(getNumberOfRetries(retries), getDelaySeconds(retries))
         getInterceptableMethods(featureInfo).each {
             it.addInterceptor(interceptor)
         }
