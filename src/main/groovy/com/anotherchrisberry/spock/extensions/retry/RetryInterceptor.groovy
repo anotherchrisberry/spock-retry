@@ -14,9 +14,11 @@ class RetryInterceptor implements IMethodInterceptor {
     private static final String BEFORE_RETRY_METHOD_NAME = "beforeRetry"
 
     Integer retryMax
+    Double delaySeconds
 
-    RetryInterceptor(int retryMax) {
+    RetryInterceptor(int retryMax, double delaySeconds) {
         this.retryMax = retryMax
+        this.delaySeconds = delaySeconds
     }
 
     void intercept(IMethodInvocation invocation) throws Throwable {
@@ -30,6 +32,9 @@ class RetryInterceptor implements IMethodInterceptor {
                 attempts++
                 if (attempts > retryMax) {
                     throw t
+                }
+                if (delaySeconds) {
+                    Thread.sleep((delaySeconds*1000).toLong())
                 }
                 invocation.spec.specsBottomToTop.each { spec ->
                     spec.cleanupMethods.each {
