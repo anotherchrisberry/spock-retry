@@ -56,6 +56,9 @@ class RetryInterceptor implements IMethodInterceptor {
                         } catch (Throwable t2) {
                             // increment counter, since this is the start of the re-run
                             attempts++
+                            if (attempts > retryMax) {
+                                throw t
+                            }
                             LOG.info("Retry caught failure ${attempts + 1} / ${retryMax + 1} while setting up", t2)
                         }
                     }
