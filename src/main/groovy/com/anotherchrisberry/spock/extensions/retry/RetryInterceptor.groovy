@@ -27,6 +27,8 @@ class RetryInterceptor implements IMethodInterceptor {
             try {
                 invocation.proceed()
                 attempts = retryMax + 1
+            } catch (org.junit.AssumptionViolatedException e) {
+                throw e
             } catch (Throwable t) {
                 LOG.info("Retry caught failure ${attempts + 1} / ${retryMax + 1}: ", t)
                 attempts++
