@@ -40,7 +40,7 @@ class RetryInterceptor implements IMethodInterceptor {
             } catch (org.junit.AssumptionViolatedException e) {
                 throw e
             } catch (Throwable t) {
-                if( ! checkRetry.test(t)){
+                if (!checkRetry.test(t)) {
                     throw t
                 }
                 LOG.info("Retry caught failure ${attempts + 1} / ${retryMax + 1}: ", t)

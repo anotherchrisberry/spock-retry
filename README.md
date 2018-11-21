@@ -66,7 +66,7 @@ The `times` argument is optional; with none specified, the runner will attempt t
 
 If you want to retry only for some exceptions:
 ```groovy
-    @RetryOnFailure(times=3, only={MyException1.class, MyException2.class})
+    @RetryOnFailure(times=3, include={MyException1.class, MyException2.class})
     void 'does something flaky'() {
     }
 ```
