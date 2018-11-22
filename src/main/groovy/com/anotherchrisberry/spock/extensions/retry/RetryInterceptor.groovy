@@ -1,5 +1,6 @@
 package com.anotherchrisberry.spock.extensions.retry
 
+import org.junit.AssumptionViolatedException
 import org.spockframework.runtime.extension.IMethodInterceptor
 import org.spockframework.runtime.extension.IMethodInvocation
 import org.spockframework.util.ReflectionUtil
@@ -9,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 class RetryInterceptor implements IMethodInterceptor {
 
-    static Logger LOG = LoggerFactory.getLogger(RetryInterceptor.class);
+    static Logger LOG = LoggerFactory.getLogger(RetryInterceptor.class)
 
     private static final String BEFORE_RETRY_METHOD_NAME = "beforeRetry"
 
@@ -27,7 +28,7 @@ class RetryInterceptor implements IMethodInterceptor {
             try {
                 invocation.proceed()
                 attempts = retryMax + 1
-            } catch (org.junit.AssumptionViolatedException e) {
+            } catch (AssumptionViolatedException e) {
                 throw e
             } catch (Throwable t) {
                 LOG.info("Retry caught failure ${attempts + 1} / ${retryMax + 1}: ", t)

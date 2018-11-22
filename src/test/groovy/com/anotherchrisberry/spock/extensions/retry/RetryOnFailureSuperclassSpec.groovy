@@ -11,7 +11,7 @@ class RetryOnFailureSuperclassSpec extends Specification {
         when:
         if (retryCount < 9) {
             retryCount++
-            throw new RuntimeException('not there yet')
+            throw new RuntimeException("not there yet: ${retryCount}")
         }
 
         then:

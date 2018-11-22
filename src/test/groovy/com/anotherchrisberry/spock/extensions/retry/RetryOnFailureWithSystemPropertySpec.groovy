@@ -13,6 +13,10 @@ class RetryOnFailureWithSystemPropertySpec extends Specification {
         System.setProperty("spock-retry.times", "5")
     }
 
+    void cleanupSpec() {
+        System.clearProperty("spock-retry.times")
+    }
+
     void 'class level test'() {
         when:
         if (classLevelTries < 5) {
