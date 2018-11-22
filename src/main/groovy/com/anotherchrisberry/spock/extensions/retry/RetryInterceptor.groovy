@@ -5,7 +5,9 @@ import org.spockframework.runtime.extension.IMethodInterceptor
 import org.spockframework.runtime.extension.IMethodInvocation
 import org.spockframework.util.ReflectionUtil
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory
+
+import java.util.function.Predicate;
 
 
 class RetryInterceptor implements IMethodInterceptor {
@@ -17,9 +19,17 @@ class RetryInterceptor implements IMethodInterceptor {
     Integer retryMax
     Double delaySeconds
 
-    RetryInterceptor(int retryMax, double delaySeconds) {
+    /// check whether exception is retryable.
+    Predicate<Throwable> checkRetry;
+
+    RetryInterceptor(int retryMax, double delaySeconds, Predicate<Throwable> checkRetry) {
         this.retryMax = retryMax
         this.delaySeconds = delaySeconds
+        this.checkRetry = checkRetry
+    }
+
+    RetryInterceptor(int retryMax, double delaySeconds) {
+        this(retryMax, delaySeconds, {t -> true})
     }
 
     void intercept(IMethodInvocation invocation) throws Throwable {
@@ -31,6 +41,9 @@ class RetryInterceptor implements IMethodInterceptor {
             } catch (AssumptionViolatedException e) {
                 throw e
             } catch (Throwable t) {
+                if (!checkRetry.test(t)) {
+                    throw t
+                }
                 LOG.info("Retry caught failure ${attempts + 1} / ${retryMax + 1}: ", t)
                 attempts++
                 if (attempts > retryMax) {

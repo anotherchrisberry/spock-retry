@@ -1,16 +1,17 @@
 package com.anotherchrisberry.spock.extensions.retry
 
-import org.spockframework.compiler.model.FeatureMethod
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension
 import org.spockframework.runtime.model.FeatureInfo
 import org.spockframework.runtime.model.MethodInfo
 import org.spockframework.runtime.model.SpecInfo
 
+import java.util.function.Predicate
+
 class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailure> {
 
     void visitFeatureAnnotation(RetryOnFailure retries, FeatureInfo feature) {
         clearInterceptors(feature)
-        feature.getFeatureMethod().interceptors.add(new RetryInterceptor(getNumberOfRetries(retries), getDelaySeconds(retries)))
+        feature.getFeatureMethod().interceptors.add(new RetryInterceptor(getNumberOfRetries(retries), getDelaySeconds(retries), getExceptionChecks(retries)))
     }
 
     void visitSpecAnnotation(RetryOnFailure retries, SpecInfo spec) {
@@ -42,9 +43,26 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
         String defaultRetries = Integer.toString(retries.times())
         return Integer.parseInt(System.getProperty("spock-retry.times", defaultRetries))
     }
+
     double getDelaySeconds(RetryOnFailure retries) {
         String defaultDelay = Double.toString(retries.delaySeconds())
-        return Double.parseDouble(System.getProperty("spck-retry.delaySeconds", defaultDelay))
+        return Double.parseDouble(System.getProperty("spock-retry.delaySeconds", defaultDelay))
+    }
+
+    Predicate<Throwable> getExceptionChecks(final RetryOnFailure retries) {
+        final Predicate<Throwable> predIncludes = Optional.ofNullable(retries.include())
+                .map{l -> Arrays.asList(l)}
+                .filter{l -> ! l.isEmpty()}
+                .map{c -> {t -> hasMatchingClass(t, c)}}
+                .orElseGet { -> {t -> true} }
+
+        final Predicate<Throwable> predExcludes = Optional.ofNullable(retries.exclude())
+                .map{l -> Arrays.asList(l)}
+                .filter{l -> ! l.isEmpty()}
+                .map{c -> {t -> ! hasMatchingClass(t, c)}}
+                .orElseGet { -> {t -> true} }
+
+        return { t -> predIncludes.test(t) && predExcludes.test(t)}
     }
 
     private List<MethodInfo> getInterceptableMethods(FeatureInfo feature) {
@@ -67,5 +85,9 @@ class RetrySpecExtension extends AbstractAnnotationDrivenExtension<RetryOnFailur
         getInterceptableMethods(featureInfo).each {
             it.addInterceptor(interceptor)
         }
+    }
+
+    private static boolean hasMatchingClass(Throwable e, Collection<Class<Throwable>> classes) {
+        return classes.stream().anyMatch { c -> c.isInstance(e) }
     }
 }

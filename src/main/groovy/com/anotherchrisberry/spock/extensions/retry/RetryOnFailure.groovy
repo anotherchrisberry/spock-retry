@@ -15,4 +15,7 @@ public @interface RetryOnFailure {
     int times() default 1;
     int delaySeconds() default 0;
 
+    Class<? extends Throwable>[] include() default [];
+
+    Class<? extends Throwable>[] exclude() default [];
 }
