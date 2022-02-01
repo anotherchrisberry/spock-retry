@@ -10,7 +10,6 @@ buildscript {
 }
 
 apply plugin: "com.jfrog.bintray"
-apply plugin: "maven"
 apply plugin: "maven-publish"
 apply plugin: "groovy"
 apply plugin: "idea"
@@ -21,9 +20,9 @@ repositories() {
 }
 
 dependencies {
-  compile "org.codehaus.groovy:groovy:2.4.3"
-  compile "org.spockframework:spock-core:1.1-groovy-2.4"
-  compile "org.slf4j:slf4j-api:1.6.0"
+  implementation "org.codehaus.groovy:groovy:2.4.21"
+  implementation "org.spockframework:spock-core:1.1-groovy-2.4"
+  implementation "org.slf4j:slf4j-api:1.6.0"
 }
 
 task sourceJar(type: Jar) {
